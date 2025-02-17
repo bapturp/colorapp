@@ -1,33 +1,35 @@
-import express from 'express';
+import express from 'express'
 
-const app = express();
+const app = express()
 
-app.use(express.json());
+app.use(express.json())
 
 app.get('/', (_, res) => {
-  const color = process.env.COLOR || 'unknown';
-  res.json({ color });
-});
+  const color = process.env.COLOR || 'unknown'
+  res.json({ color })
+})
 
-let ready = false;
-app.get('/health/ready', (_, res) => {
-  ready
-    ? res.json({ status: 'OK' })
-    : res.status(503).json({ status: 'NOT READY' });
-});
+let ready = false
+app.get('/healthz/readiness', (_, res) => {
+  if (!ready) {
+    res.status(503).json({ status: 'NOT READY' })
+  }
+  res.json({ status: 'OK' })
+})
 
-app.get('/health/live', (_, res) => {
-  res.json({ status: 'OK' });
-});
+app.get('/healthz/liveness', (_, res) => {
+  res.json({ status: 'OK' })
+})
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080
 const server = app.listen(port, () => {
-  ready = true;
-  console.log(`Server is running on port ${port}`);
-});
+  ready = true
+  console.log(`Server is running on port ${port}`)
+})
 
 process.on('SIGTERM', () => {
+  console.log('SIGTERM received, closing server')
   server.close(() => {
-    console.log('Process terminated');
-  });
-});
+    console.log('server terminated')
+  })
+})
