@@ -18,15 +18,3 @@ curl http://localhost:8080/
 ```sh
 COLOR=blue go run colorapp.go
 ```
-
-#### Build the image
-
-```sh
-docker build -t bapturp/colorapp .
-```
-
-#### Run a container
-
-```sh
-docker run --rm -p 8080:8080 -e COLOR=blue bapturp/colorapp
-```
