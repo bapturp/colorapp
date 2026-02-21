@@ -15,12 +15,14 @@ func requestLogger(next http.Handler) http.Handler {
 }
 
 func main() {
-	mux := http.NewServeMux()
-
 	color := os.Getenv("COLOR")
 	if color == "" {
 		color = "None"
 	}
+
+	log.Printf("COLOR is set to %s", color)
+
+	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -36,16 +38,12 @@ func main() {
 		fmt.Fprint(w, "The requested entity body is short and stout.")
 	})
 
-	addr := ":8080"
-
-	log.Printf("Server listening on %v", addr)
-
-	log.Printf("COLOR is set to %s", color)
-
 	server := http.Server{
-		Addr:    addr,
+		Addr:    ":8080",
 		Handler: requestLogger(mux),
 	}
+
+	log.Printf("Server listening on %v", server.Addr)
 
 	log.Fatal(server.ListenAndServe())
 }
